@@ -1,0 +1,36 @@
+name: build
+on:
+  push:
+    branches: 
+      - main
+    paths-ignore:
+      - "README.md"
+  workflow_dispatch:
+
+env:
+  REGISTRY_URL: ghcr.io
+  REGISTRY_USERNAME: azamatkomaev
+  REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login with Github Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY_URL }}
+          username: ${{ env.REGISTRY_USERNAME }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+      - name: Add custom builder
+        run: |
+          docker buildx create \
+            --name container-builder \
+            --driver docker-container \
+            --bootstrap --use
+      - name: Build & Publish to Github Container registry
+        run: |
+          docker buildx build --platform linux/amd64,linux/arm64 --push . \
+                       --tag $REGISTRY_URL/$REGISTRY_USERNAME/argo-image-updater-demo:$IMAGE_TAG
