@@ -5,6 +5,7 @@ on:
       - main
     paths-ignore:
       - "README.md"
+      - "deploy/"
   workflow_dispatch:
 
 env:
