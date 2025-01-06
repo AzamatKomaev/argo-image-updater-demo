@@ -14,6 +14,8 @@ spec:
       labels:
         app: ping
     spec:
+      imagePullSecrets:
+      - name: google-registry
       containers:
       - name: ping
         image: ghcr.io/azamatkomaev/argo-image-updater-demo:d0400390a3fc79ffed3991d9b473d3faccd26c1e
